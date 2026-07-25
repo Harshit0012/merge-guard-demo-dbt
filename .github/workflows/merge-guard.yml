@@ -1,0 +1,87 @@
+# Merge Guard — blast-radius gate for dbt column changes.
+#
+# ⚠️ REQUIRES A RUNNER THAT CAN REACH YOUR DATAHUB GMS.
+#
+# Merge Guard reads lineage from DataHub. A GitHub-hosted runner cannot reach a GMS on
+# localhost or inside a private network, so this workflow targets a self-hosted runner. In
+# the recorded demo the same command is run from a laptop against a local DataHub quickstart
+# — identical code path, identical output, just a different machine. That is stated in the
+# project README rather than papered over.
+#
+# For a GMS reachable from the public internet, change `runs-on` to `ubuntu-latest` and set
+# DATAHUB_GMS_URL / DATAHUB_GMS_TOKEN as repository secrets.
+
+name: merge-guard
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "models/**/*.sql"
+      - "models/**/*.yml"
+
+# The check must be able to write a review and a commit status.
+permissions:
+  contents: read
+  pull-requests: write
+  statuses: write
+
+concurrency:
+  # One evaluation per PR. A rapid second push should supersede the first, not race it —
+  # both runs would compute the same run key and one would find the other's already there.
+  group: merge-guard-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  blast-radius:
+    runs-on: self-hosted
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out the dbt project
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Merge Guard reads both sides of the diff via the API, but a full
+                         # history keeps `git` usable for local debugging on the runner.
+
+      - name: Check out Merge Guard
+        uses: actions/checkout@v4
+        with:
+          repository: Harshit0012/merge-guard
+          path: .merge-guard
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Merge Guard
+        working-directory: .merge-guard
+        # acryl-datahub is pinned to the GMS build (1.5.0.6). Never let this resolve to a
+        # newer client: it warns on every call against this server.
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+
+      - name: Evaluate the blast radius
+        working-directory: .merge-guard
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DATAHUB_GMS_URL: ${{ secrets.DATAHUB_GMS_URL }}
+          DATAHUB_GMS_TOKEN: ${{ secrets.DATAHUB_GMS_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        # Exit 1 means, and only ever means, a computed severity at or above `block_at`.
+        # Every failure of Merge Guard's own — GMS unreachable, MCP down, the model timing
+        # out — exits 0 and posts a "could not evaluate" comment. A gate that blocks on its
+        # own bugs gets switched off within a week.
+        run: |
+          merge-guard check \
+            --pr "${{ github.event.pull_request.number }}" \
+            --receipt-dir "runs/pr-${{ github.event.pull_request.number }}"
+
+      - name: Upload the run receipt
+        if: always() # the receipt is most useful precisely when the step above failed
+        uses: actions/upload-artifact@v4
+        with:
+          name: merge-guard-receipt-pr-${{ github.event.pull_request.number }}
+          path: .merge-guard/runs/
+          if-no-files-found: ignore
