@@ -20,7 +20,7 @@ select
     cust_email,  -- Customer email address
     account_mgr_id,  -- ID of the account manager assigned to the customer
     customer_since,  -- Date when customer was first registered
-    customer_class,  -- Classification of the customer (e.g., Platinum, Gold, Silver)
+    customer_class as cust_segment,  -- Classification of the customer (e.g., Platinum, Gold, Silver)
     suggestions,  -- Customer product suggestions or preferences
     dob,  -- Customer date of birth
     mailshot,  -- Flag indicating if customer has opted for marketing emails (Y/N)

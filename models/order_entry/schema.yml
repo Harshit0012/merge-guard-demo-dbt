@@ -61,7 +61,7 @@ models:
       - name: customer_since
         description: "Date when customer was first registered"
         data_type: TEXT
-      - name: customer_class
+      - name: cust_segment
         description: "Classification of the customer (e.g., Platinum, Gold, Silver)"
         data_type: TEXT
       - name: suggestions
