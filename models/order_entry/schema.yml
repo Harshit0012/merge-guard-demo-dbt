@@ -1,0 +1,282 @@
+version: 2
+
+models:
+  - name: addresses
+    description: "addresses — mirrors the DataHub catalog dataset of the same name."
+    columns:
+      - name: address_id
+        description: "Unique identifier for the address"
+        data_type: NUMBER
+      - name: customer_id
+        description: "Foreign key to the customers table"
+        data_type: NUMBER
+      - name: date_created
+        description: "Date when address was added to the system"
+        data_type: TEXT
+      - name: address_line1
+        description: "First line of address"
+        data_type: TEXT
+      - name: address_line2
+        description: "Second line of address"
+        data_type: TEXT
+      - name: town_city
+        description: "Town or city of the address"
+        data_type: TEXT
+      - name: country_id
+        description: "Reference to country table"
+        data_type: NUMBER
+      - name: zipcode
+        description: "Postal code of address"
+        data_type: NUMBER
+      - name: region_id
+        description: "Reference to region table"
+        data_type: NUMBER
+  - name: customers
+    description: "customers — mirrors the DataHub catalog dataset of the same name."
+    columns:
+      - name: customer_id
+        description: "Unique identifier for the customer"
+        data_type: NUMBER
+      - name: cust_first_name
+        description: "Customer first name"
+        data_type: TEXT
+      - name: cust_last_name
+        description: "Customer last name"
+        data_type: TEXT
+      - name: nls_language
+        description: "Preferred language code"
+        data_type: TEXT
+      - name: nls_territory
+        description: "Geographical territory for localization settings"
+        data_type: TEXT
+      - name: credit_limit
+        description: "Maximum credit amount for the customer"
+        data_type: FLOAT
+      - name: cust_email
+        description: "Customer email address"
+        data_type: TEXT
+      - name: account_mgr_id
+        description: "ID of the account manager assigned to the customer"
+        data_type: NUMBER
+      - name: customer_since
+        description: "Date when customer was first registered"
+        data_type: TEXT
+      - name: customer_class
+        description: "Classification of the customer (e.g., Platinum, Gold, Silver)"
+        data_type: TEXT
+      - name: suggestions
+        description: "Customer product suggestions or preferences"
+        data_type: TEXT
+      - name: dob
+        description: "Customer date of birth"
+        data_type: TEXT
+      - name: mailshot
+        description: "Flag indicating if customer has opted for marketing emails (Y/N)"
+        data_type: NUMBER
+      - name: partner_mailshot
+        description: "Flag indicating if customer has opted for partner marketing (Y/N)"
+        data_type: NUMBER
+      - name: phone_number
+        description: "Customer contact phone number"
+        data_type: TEXT
+      - name: address_line1
+        description: "First line of customer primary address"
+        data_type: TEXT
+      - name: address_line2
+        description: "Second line of customer primary address"
+        data_type: TEXT
+      - name: address_line3
+        description: "Third line of customer primary address"
+        data_type: TEXT
+      - name: town_city
+        description: "Town or city of customer primary address"
+        data_type: TEXT
+      - name: country_id
+        description: "Reference to country table for primary address"
+        data_type: NUMBER
+      - name: zipcode
+        description: "Postal code of customer primary address"
+        data_type: NUMBER
+      - name: region_id
+        description: "Reference to region table for primary address"
+        data_type: NUMBER
+  - name: inventories
+    description: "inventories — mirrors the DataHub catalog dataset of the same name."
+    columns:
+      - name: product_id
+        description: "Foreign key to the products table"
+        data_type: NUMBER
+      - name: warehouse_id
+        description: "Foreign key to the warehouses table"
+        data_type: NUMBER
+      - name: quantity_on_hand
+        description: "Current inventory count for this product in this warehouse"
+        data_type: NUMBER
+      - name: restock_level
+        description: "Threshold at which restocking is initiated"
+        data_type: NUMBER
+      - name: max_stock_level
+        description: "Maximum storage capacity for this product"
+        data_type: NUMBER
+      - name: reorder_quantity
+        description: "Standard reorder quantity when restocking"
+        data_type: NUMBER
+  - name: order_items
+    description: "order_items — mirrors the DataHub catalog dataset of the same name."
+    columns:
+      - name: order_id
+        description: "Foreign key to the orders table"
+        data_type: NUMBER
+      - name: line_item_id
+        description: "Line item sequence number within the order"
+        data_type: NUMBER
+      - name: product_id
+        description: "Foreign key to the products table"
+        data_type: NUMBER
+      - name: unit_price
+        description: "Selling price per unit at time of order"
+        data_type: FLOAT
+      - name: quantity
+        description: "Number of units ordered"
+        data_type: NUMBER
+      - name: dispatch_date
+        description: "Date when item was dispatched from warehouse"
+        data_type: TEXT
+      - name: return_date
+        description: "Date when item was returned if applicable"
+        data_type: TEXT
+      - name: gift_wrap
+        description: "Flag or type of gift wrapping requested"
+        data_type: TEXT
+      - name: condition
+        description: "Condition of product (e.g., New, Refurbished)"
+        data_type: TEXT
+      - name: supplier_id
+        description: "ID of the supplier if dropshipped"
+        data_type: NUMBER
+      - name: estimated_delivery
+        description: "Estimated delivery date for this item"
+        data_type: TEXT
+  - name: orders
+    description: "orders — mirrors the DataHub catalog dataset of the same name."
+    columns:
+      - name: order_id
+        description: "Unique identifier for the order"
+        data_type: NUMBER
+      - name: order_date
+        description: "Date and time when the order was placed including timezone"
+        data_type: TEXT
+      - name: order_mode
+        description: "Method of order placement (e.g., online, phone, direct)"
+        data_type: TEXT
+      - name: customer_id
+        description: "Foreign key to the customers table"
+        data_type: NUMBER
+      - name: order_status
+        description: "Current status of the order (e.g., 1=Pending, 2=Processing, 3=Shipped)"
+        data_type: NUMBER
+      - name: order_total
+        description: "Total monetary value of the order"
+        data_type: FLOAT
+      - name: sales_rep_id
+        description: "ID of the sales representative handling the order"
+        data_type: NUMBER
+      - name: promotion_id
+        description: "Foreign key to promotions table if applicable"
+        data_type: FLOAT
+      - name: warehouse_id
+        description: "Foreign key to warehouses table for fulfillment location"
+        data_type: NUMBER
+      - name: delivery_type
+        description: "Shipping method (e.g., Standard, Express, Overnight)"
+        data_type: TEXT
+      - name: cost_of_delivery
+        description: "Shipping and handling cost"
+        data_type: FLOAT
+      - name: wait_till_complete_yn
+        description: "Flag indicating whether to ship complete order or partial (Y/N)"
+        data_type: TEXT
+      - name: billing_address_id
+        description: "Reference to the billing address"
+        data_type: NUMBER
+      - name: delivery_address_id
+        description: "Reference to the shipping address"
+        data_type: NUMBER
+      - name: payment_method_code
+        description: "Code indicating payment method used"
+        data_type: TEXT
+  - name: products
+    description: "products — mirrors the DataHub catalog dataset of the same name."
+    columns:
+      - name: product_id
+        description: "Unique identifier for the product"
+        data_type: NUMBER
+      - name: product_name
+        description: "Name of the product"
+        data_type: TEXT
+      - name: product_description
+        description: "Brief description of the product"
+        data_type: TEXT
+      - name: category_id
+        description: "Foreign key to the product_categories table"
+        data_type: NUMBER
+      - name: weight_class
+        description: "Weight class for shipping calculations"
+        data_type: NUMBER
+      - name: warranty_period
+        description: "Standard warranty period for the product"
+        data_type: TEXT
+      - name: supplier_id
+        description: "ID of the supplier for this product"
+        data_type: NUMBER
+      - name: product_status
+        description: "Current status (e.g., Available, Discontinued, Planned)"
+        data_type: TEXT
+      - name: list_price
+        description: "Standard list price for the product"
+        data_type: FLOAT
+      - name: min_price
+        description: "Minimum selling price for the product"
+        data_type: FLOAT
+      - name: catalog_url
+        description: "URL to the product in the online catalog"
+        data_type: TEXT
+      - name: date_added
+        description: "Date when product was added to the catalog"
+        data_type: TEXT
+  - name: promotions
+    description: "promotions — mirrors the DataHub catalog dataset of the same name."
+    columns:
+      - name: promotion_id
+        description: "Unique identifier for the promotion"
+        data_type: NUMBER
+      - name: promotion_name
+        description: "Name of the marketing promotion"
+        data_type: TEXT
+      - name: promotion_start_date
+        description: "Starting date of the promotion"
+        data_type: TEXT
+      - name: promotion_end_date
+        description: "Ending date of the promotion"
+        data_type: TEXT
+      - name: promotion_description
+        description: "Detailed description of the promotion"
+        data_type: TEXT
+      - name: promotion_cost
+        description: "Budgeted cost of running the promotion"
+        data_type: FLOAT
+  - name: warehouses
+    description: "warehouses — mirrors the DataHub catalog dataset of the same name."
+    columns:
+      - name: warehouse_id
+        description: "Unique identifier for the warehouse"
+        data_type: NUMBER
+      - name: warehouse_name
+        description: "Name of the warehouse location"
+        data_type: TEXT
+      - name: location_id
+        description: "Reference to the physical location"
+        data_type: NUMBER
+      - name: wh_geo_location
+        description: "Geographic coordinates of the warehouse"
+        data_type: TEXT

@@ -1,0 +1,18 @@
+name: 'merge_guard_demo'
+version: '1.0.0'
+config-version: 2
+
+profile: 'merge_guard_demo'
+
+model-paths: ["models"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  merge_guard_demo:
+    order_entry:
+      +materialized: table
+      +schema: order_entry
+    analytics:
+      +materialized: table
+      +schema: analytics
